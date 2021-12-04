@@ -67,7 +67,26 @@ static void genStmt( TreeNode * tree)
          emitRM_Abs("JEQ",ac,savedLoc1,"repeat: jmp back to body");
          if (TraceCode)  emitComment("<- repeat") ;
          break; /* repeat */
-
+      case WhileK:
+      /* comenzar el whilek   */
+         if (TraceCode) emitComment("-> while") ;
+         p1 = tree->child[0] ;
+         p2 = tree->child[1] ;
+         savedLoc1 = emitSkip(0);
+         emitComment("while: saltar hasta el endwhile(terminar bucle) ");
+         /* generate code for test */
+         cGen(p1);
+         savedLoc2 = emitSkip(1);
+         emitComment("while: saltar el cuerpo del while");
+         /* generate code for body */
+         cGen(p2);
+         emitRM_Abs("LDA",pc,savedLoc1,"while: dirigirse al final del while  ");
+         currentLoc = emitSkip(0) ;
+         emitBackup(savedLoc2) ;
+         emitRM_Abs("JEQ",ac,currentLoc,"while: volver al inicio del while ");
+         emitRestore() ;
+         if (TraceCode)  emitComment("<- while") ;
+         break; /* Terminar el case de while */
       case AssignK:
          if (TraceCode) emitComment("-> assign") ;
          /* generate code for rhs */
@@ -89,26 +108,6 @@ static void genStmt( TreeNode * tree)
          /* now output it */
          emitRO("OUT",ac,0,0,"write ac");
          break;
-      case WhileK:
-      /* comenzar el whilek   */
-         if (TraceCode) emitComment("-> while") ;
-         p1 = tree->child[0] ;
-         p2 = tree->child[1] ;
-         savedLoc1 = emitSkip(0);
-         emitComment("while: saltar hasta el endwhile(terminar bucle) ");
-         /* generate code for test */
-         cGen(p1);
-         savedLoc2 = emitSkip(1);
-         emitComment("while: saltar el cuerpo del while");
-         /* generate code for body */
-         cGen(p2);
-         emitRM_Abs("LDA",pc,savedLoc1,"while: dirigirse al final del while  ");
-         currentLoc = emitSkip(0) ;
-         emitBackup(savedLoc2) ;
-         emitRM_Abs("JEQ",ac,currentLoc,"while: volver al inicio del while ");
-         emitRestore() ;
-         if (TraceCode)  emitComment("<- while") ;
-         break; /* Terminar el case de while */
       default:
          break;
     }
@@ -214,7 +213,7 @@ static void cGen( TreeNode * tree)
  * file name as a comment in the code file
  */
 void codeGen(TreeNode * syntaxTree, char * codefile)
-{  char * s = malloc(strlen(codefile)+7);
+{  char * s = (char*)malloc(strlen(codefile)+7);
    strcpy(s,"File: ");
    strcat(s,codefile);
    emitComment("TINY Compilation to TM Code");

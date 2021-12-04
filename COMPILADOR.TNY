@@ -1,0 +1,9 @@
+read x; 
+if 0 < x then 
+  cont := 1;
+  while 0 < x then
+	cont := cont + cont;
+	x := x - 1
+  endwhile;
+  write cont 
+end

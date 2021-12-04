@@ -17,15 +17,15 @@
  */
 #define NO_CODE FALSE
 
-#include "util.h"
+#include "UTIL.H"
 #if NO_PARSE
-#include "scan.h"
+#include "SCAN.H"
 #else
-#include "parse.h"
+#include "PARSE.H"
 #if !NO_ANALYZE
-#include "analyze.h"
+#include "ANALYZE.H"
 #if !NO_CODE
-#include "cgen.h"
+#include "CGEN.H"
 #endif
 #endif
 #endif
