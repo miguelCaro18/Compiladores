@@ -1,0 +1,8 @@
+read x;
+entrada := x;
+contador := 0;
+  while contador < entrada then
+	contador := contador + 1
+  endwhile;
+write contador 
+end
